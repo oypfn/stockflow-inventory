@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Activity, AlertTriangle, ArrowDownToLine, ArrowUpRight, Bell, Boxes, ChevronDown, CircleHelp, LayoutDashboard, Menu, Package, Plus, Search, Settings2, ShieldCheck, SlidersHorizontal, TrendingUp, Trash2, X } from 'lucide-react';
-import { inventoryValue, isProduct, parseProducts, STORAGE_KEY, stockStatus, type Product, type ProductInput } from './domain';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Activity, AlertTriangle, ArrowDownToLine, ArrowUpRight, Bell, Boxes, CircleHelp, LayoutDashboard, Menu, Package, Plus, Search, Settings2, ShieldCheck, SlidersHorizontal, TrendingUp, Trash2, X } from 'lucide-react';
+import { inventoryValue, parseProducts, STORAGE_KEY, stockStatus, type Product, type ProductInput } from './domain';
 
 const money = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 const initialProducts: Product[] = [
@@ -29,7 +29,7 @@ export default function App() {
   const totalValue = inventoryValue(products);
   const categories = new Set(products.map(p => p.category)).size;
   const visible = useMemo(() => products.filter(p => (filter === 'all' || stockStatus(p) === 'low') && [p.name, p.sku, p.category, p.supplier].some(v => v.toLowerCase().includes(query.toLowerCase()))), [products, filter, query]);
-  function addProduct(event: React.FormEvent<HTMLFormElement>) {
+  function addProduct(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const product: Product = { ...form, id: crypto.randomUUID(), updatedAt: new Date().toISOString() };
     if (!product.name.trim() || !product.sku.trim() || !product.supplier.trim()) return;
