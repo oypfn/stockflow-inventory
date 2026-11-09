@@ -44,5 +44,5 @@ export function buildInventoryCsv(products: Product[]): string {
       product.supplier,
     ]),
   ];
-  return rows.map((row) => row.map(csvCell).join(',')).join('\\r\\n');
+  return rows.map((row) => row.map(csvCell).join(',')).join('\r\n');
 }
