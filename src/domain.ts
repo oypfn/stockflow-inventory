@@ -25,3 +25,24 @@ export function stockStatus(product: Product): 'low' | 'healthy' {
 export function inventoryValue(products: Product[]): number {
   return products.reduce((total, product) => total + product.quantity * product.unitPrice, 0);
 }
+
+function csvCell(value: string): string {
+  const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
+
+export function buildInventoryCsv(products: Product[]): string {
+  const rows = [
+    ['Name', 'SKU', 'Category', 'Quantity', 'Reorder level', 'Unit price EUR', 'Supplier'],
+    ...products.map((product) => [
+      product.name,
+      product.sku,
+      product.category,
+      String(product.quantity),
+      String(product.reorderLevel),
+      String(product.unitPrice),
+      product.supplier,
+    ]),
+  ];
+  return rows.map((row) => row.map(csvCell).join(',')).join('\\r\\n');
+}
