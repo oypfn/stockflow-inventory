@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Activity, AlertTriangle, ArrowDownToLine, ArrowUpRight, Bell, Boxes, CircleHelp, LayoutDashboard, Menu, Package, Plus, Search, Settings2, ShieldCheck, SlidersHorizontal, TrendingUp, Trash2, X } from 'lucide-react';
-import { inventoryValue, parseProducts, STORAGE_KEY, stockStatus, type Product, type ProductInput } from './domain';
+import { buildInventoryCsv, inventoryValue, parseProducts, STORAGE_KEY, stockStatus, type Product, type ProductInput } from './domain';
 
 const money = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 const initialProducts: Product[] = [
@@ -41,8 +41,7 @@ export default function App() {
     if (target && window.confirm(`Remove ${target.name} from inventory?`)) setProducts(current => current.filter(p => p.id !== id));
   }
   function exportCsv() {
-    const rows = [['Name', 'SKU', 'Category', 'Quantity', 'Reorder level', 'Unit price EUR', 'Supplier'], ...products.map(p => [p.name, p.sku, p.category, String(p.quantity), String(p.reorderLevel), String(p.unitPrice), p.supplier])];
-    const csv = rows.map(row => row.map(cell => `"${cell.replaceAll('"', '""')}"`).join(',')).join('\r\n');
+    const csv = buildInventoryCsv(products);
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
     const link = document.createElement('a'); link.href = url; link.download = 'stockflow-inventory.csv'; link.click(); URL.revokeObjectURL(url);
   }
